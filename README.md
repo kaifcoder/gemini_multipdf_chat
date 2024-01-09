@@ -11,6 +11,8 @@ Gemini PDF Chatbot is a Streamlit-based application that allows users to chat wi
 
 ## Getting Started
 
+   **Note:** This project requires Python 3.10 or higher.
+
 1. **Clone the Repository:**
    ```bash
    git clone https://github.com/your-username/gemini-pdf-chatbot.git
@@ -41,9 +43,9 @@ Gemini PDF Chatbot is a Streamlit-based application that allows users to chat wi
 
 ## Project Structure
 
-- `main.py`: Main application script.
-- `models/`: Directory for storing model-related files.
-- `templates/`: HTML templates for the Streamlit app.
+- `app.py`: Main application script.
+- `.env`: file which will contain your environment variable.
+- `requirements.txt`: Python packages required for working of the app.
 - `README.md`: Project documentation.
 
 ## Dependencies
