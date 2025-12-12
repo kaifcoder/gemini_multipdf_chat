@@ -175,7 +175,6 @@ def main():
                         for item in output_text:
                             full_response += item
                             placeholder.markdown(full_response)
-                        placeholder.markdown(full_response)
                     message = {"role": "assistant", "content": full_response}
                     st.session_state.messages.append(message)
                 else:
