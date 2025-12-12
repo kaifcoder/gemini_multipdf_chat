@@ -106,8 +106,10 @@ def main():
                         text_chunks = get_text_chunks(raw_text)
                         get_vector_store(text_chunks)
                         st.success("Done")
+                    except ValueError as e:
+                        st.error(f"Processing error: {str(e)}")
                     except Exception as e:
-                        st.error(f"An error occurred while processing: {str(e)}")
+                        st.error(f"An unexpected error occurred: {str(e)}")
             else:
                 st.error("Please upload at least one PDF file before processing.")
 
