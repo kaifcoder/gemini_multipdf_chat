@@ -134,20 +134,24 @@ def main():
         with st.chat_message("user"):
             st.write(prompt)
 
-    # Display chat messages and bot response
-    if st.session_state.messages and st.session_state.messages[-1]["role"] != "assistant":
+        # Get bot response for the user's question
         with st.chat_message("assistant"):
             with st.spinner("Thinking..."):
-                response = user_input(prompt)
-                placeholder = st.empty()
-                full_response = ''
-                for item in response['output_text']:
-                    full_response += item
-                    placeholder.markdown(full_response)
-                placeholder.markdown(full_response)
-        if response is not None:
-            message = {"role": "assistant", "content": full_response}
-            st.session_state.messages.append(message)
+                try:
+                    response = user_input(prompt)
+                    placeholder = st.empty()
+                    full_response = ''
+                    if response and 'output_text' in response:
+                        for item in response['output_text']:
+                            full_response += item
+                            placeholder.markdown(full_response)
+                        placeholder.markdown(full_response)
+                        message = {"role": "assistant", "content": full_response}
+                        st.session_state.messages.append(message)
+                    else:
+                        st.error("Failed to get a valid response. Please try again.")
+                except Exception as e:
+                    st.error(f"An error occurred: {str(e)}")
 
 
 if __name__ == "__main__":
