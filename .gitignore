@@ -1,3 +1,5 @@
 .env
 venv
 faiss_index
+__pycache__/
+*.pyc
