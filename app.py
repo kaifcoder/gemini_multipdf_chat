@@ -38,6 +38,8 @@ def get_text_chunks(text):
 
 
 def get_vector_store(chunks):
+    if not chunks:
+        raise ValueError("No text chunks to process. The PDF might be empty or unreadable.")
     embeddings = GoogleGenerativeAIEmbeddings(
         model="models/embedding-001")  # type: ignore
     vector_store = FAISS.from_texts(chunks, embedding=embeddings)
@@ -97,11 +99,17 @@ def main():
         pdf_docs = st.file_uploader(
             "Upload your PDF Files and Click on the Submit & Process Button", accept_multiple_files=True)
         if st.button("Submit & Process"):
-            with st.spinner("Processing..."):
-                raw_text = get_pdf_text(pdf_docs)
-                text_chunks = get_text_chunks(raw_text)
-                get_vector_store(text_chunks)
-                st.success("Done")
+            if pdf_docs:
+                with st.spinner("Processing..."):
+                    try:
+                        raw_text = get_pdf_text(pdf_docs)
+                        text_chunks = get_text_chunks(raw_text)
+                        get_vector_store(text_chunks)
+                        st.success("Done")
+                    except Exception as e:
+                        st.error(f"An error occurred while processing: {str(e)}")
+            else:
+                st.error("Please upload at least one PDF file before processing.")
 
     # Main content area for displaying chat messages
     st.title("Chat with PDF files using Gemini🤖")
