@@ -3,7 +3,7 @@ google-generativeai
 python-dotenv
 langchain
 PyPDF2>=3.0.0
-chromadb
 faiss-cpu
 langchain_google_genai
 langchain-community
+langchain-text-splitters
