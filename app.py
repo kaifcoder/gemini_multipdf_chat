@@ -160,10 +160,16 @@ def main():
                 response = user_input(prompt)
                 placeholder = st.empty()
                 full_response = ''
-                for item in response['output_text']:
-                    full_response += item
+                output_text = response['output_text']
+                # Handle both string responses (from error handling) and iterable responses
+                if isinstance(output_text, str):
+                    full_response = output_text
                     placeholder.markdown(full_response)
-                placeholder.markdown(full_response)
+                else:
+                    for item in output_text:
+                        full_response += item
+                        placeholder.markdown(full_response)
+                    placeholder.markdown(full_response)
         if response is not None:
             message = {"role": "assistant", "content": full_response}
             st.session_state.messages.append(message)
