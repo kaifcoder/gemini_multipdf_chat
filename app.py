@@ -44,6 +44,9 @@ def get_text_chunks(text):
 
 
 def get_vector_store(chunks):
+    if not chunks:
+        st.error("No text chunks to process. The PDF might be empty or unreadable.")
+        return False
     try:
         embeddings = GoogleGenerativeAIEmbeddings(
             model="models/embedding-001")  # type: ignore
@@ -126,11 +129,14 @@ def main():
         pdf_docs = st.file_uploader(
             "Upload your PDF Files and Click on the Submit & Process Button", accept_multiple_files=True)
         if st.button("Submit & Process"):
-            with st.spinner("Processing..."):
-                raw_text = get_pdf_text(pdf_docs)
-                text_chunks = get_text_chunks(raw_text)
-                if get_vector_store(text_chunks):
-                    st.success("Done")
+            if pdf_docs:
+                with st.spinner("Processing..."):
+                    raw_text = get_pdf_text(pdf_docs)
+                    text_chunks = get_text_chunks(raw_text)
+                    if get_vector_store(text_chunks):
+                        st.success("Done")
+            else:
+                st.error("Please upload at least one PDF file before processing.")
 
     # Main content area for displaying chat messages
     st.title("Chat with PDF files using Gemini🤖")
@@ -153,26 +159,26 @@ def main():
         with st.chat_message("user"):
             st.write(prompt)
 
-    # Display chat messages and bot response
-    if st.session_state.messages[-1]["role"] != "assistant":
+        # Get bot response for the user's question
         with st.chat_message("assistant"):
             with st.spinner("Thinking..."):
                 response = user_input(prompt)
                 placeholder = st.empty()
                 full_response = ''
-                output_text = response['output_text']
-                # Handle both string responses (from error handling) and iterable responses
-                if isinstance(output_text, str):
-                    full_response = output_text
-                    placeholder.markdown(full_response)
-                else:
-                    for item in output_text:
-                        full_response += item
+                if response and 'output_text' in response:
+                    output_text = response['output_text']
+                    # Handle both string responses (from error handling) and iterable responses
+                    if isinstance(output_text, str):
+                        full_response = output_text
                         placeholder.markdown(full_response)
-                    placeholder.markdown(full_response)
-        if response is not None:
-            message = {"role": "assistant", "content": full_response}
-            st.session_state.messages.append(message)
+                    else:
+                        for item in output_text:
+                            full_response += item
+                            placeholder.markdown(full_response)
+                    message = {"role": "assistant", "content": full_response}
+                    st.session_state.messages.append(message)
+                else:
+                    st.error("Failed to get a valid response. Please try again.")
 
 
 if __name__ == "__main__":
